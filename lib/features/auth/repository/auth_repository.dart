@@ -4,6 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:redit_tutorial/core/providers/firebase_providers.dart';
 
+import '../../../core/constants/constants.dart';
+import '../../../core/constants/firebase_constants.dart';
+import '../../../model/user_model.dart';
+
 final authRepositoryProvider = Provider<AuthRepository>(
   (ref) => AuthRepository(
     firestore: ref.read(firestoreProvider),
@@ -27,6 +31,10 @@ class AuthRepository {
         _auth = auth,
         _googleSignIn = googleSignIn;
 
+  // getter function to the users reference in firestore
+  CollectionReference get _users =>
+      _firestore.collection(FirebaseConstants.usersCollection);
+
   void signInWithGoogle() async {
     try {
       // ? get the account from google
@@ -45,9 +53,26 @@ class AuthRepository {
       UserCredential userCredential =
           await _auth.signInWithCredential(credential);
 
-      print(userCredential.user?.email);
-    } catch (E) {
-      print(E);
+      UserModel userModel;
+      // ! check if user is new user
+      if (userCredential.additionalUserInfo!.isNewUser) {
+        // ? create the user with userModel from the credential
+        userModel = UserModel(
+          name: userCredential.user?.displayName ?? 'No Name',
+          profilePick: userCredential.user?.photoURL ?? Constants.avatarDefault,
+          banner: Constants.bannerDefault,
+          uid: userCredential.user!.uid,
+          isAuthenticated: true,
+          karma: 0,
+          awards: [],
+        );
+
+        // set data with doc = user_uid in firebase with all user information
+        await _users.doc(userCredential.user!.uid).set(userModel.toMap());
+      }
+    } catch (e) {
+      // re throw the exception
+      rethrow;
     }
   }
 }
