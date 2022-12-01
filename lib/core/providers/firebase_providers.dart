@@ -4,6 +4,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '../../firebase_options.dart';
+
 // ? creating the providers for firebase
 final firestoreProvider =
     Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
@@ -14,4 +16,4 @@ final storageProvider =
     Provider<FirebaseStorage>((ref) => FirebaseStorage.instance);
 
 // it's not an instance 
-final googleSignInProvider = Provider<GoogleSignIn>((ref) => GoogleSignIn());
+final googleSignInProvider = Provider<GoogleSignIn>((ref) => GoogleSignIn(clientId: DefaultFirebaseOptions.currentPlatform.iosClientId));
