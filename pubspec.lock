@@ -192,6 +192,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  fpdart:
+    dependency: "direct main"
+    description:
+      name: fpdart
+      sha256: f198825b5682cd1c992dbbd0b3995e46f730be0b5addfc6d6e9ef9655911e98c
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   google_sign_in:
     dependency: "direct main"
     description:
